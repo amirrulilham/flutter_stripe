@@ -280,6 +280,13 @@ extension StripeSdk {
     ) -> PaymentSheet.IntentConfiguration {
         var mode: PaymentSheet.IntentConfiguration.Mode
         if let amount = modeParams["amount"] as? Int {
+             // Extract captureMethod handling both String and NSString (like Android's getString())
+            let captureMethodValue = modeParams["captureMethod"]
+            let captureMethodString: String? = {
+                guard let value = captureMethodValue, !(value is NSNull) else { return nil }
+                return (value as? String) ?? (value as? NSString) as String?
+            }()
+            
             mode = PaymentSheet.IntentConfiguration.Mode.payment(
                 amount: amount,
                 currency: modeParams["currencyCode"] as? String ?? "",
