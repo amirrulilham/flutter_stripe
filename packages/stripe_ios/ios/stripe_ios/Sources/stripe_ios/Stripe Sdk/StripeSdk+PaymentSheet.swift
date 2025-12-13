@@ -286,14 +286,14 @@ extension StripeSdk {
                 guard let value = captureMethodValue, !(value is NSNull) else { return nil }
                 return (value as? String) ?? (value as? NSString) as String?
             }()
-            
+
             mode = PaymentSheet.IntentConfiguration.Mode.payment(
                 amount: amount,
                 currency: modeParams["currencyCode"] as? String ?? "",
                 setupFutureUsage: modeParams["setupFutureUsage"] != nil
                     ? (modeParams["setupFutureUsage"] as? String == "OffSession" ? .offSession : .onSession)
                     : nil,
-            captureMethod: mapCaptureMethod(modeParams["captureMethod"] as? String)
+            captureMethod: mapCaptureMethod(captureMethodString)
             )
         } else {
             mode = PaymentSheet.IntentConfiguration.Mode.setup(
