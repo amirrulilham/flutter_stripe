@@ -201,7 +201,16 @@ extension StripeSdk {
                 resolve(Errors.createError(ErrorType.Failed, "You must provide `intentConfiguration.confirmHandler` if you are not passing an intent client secret"))
                 return
             }
-            let captureMethodString = modeParams["captureMethod"] as? String
+            let captureMethodValue = modeParams["captureMethod"]
+            let captureMethodString: String? = {
+                guard let value = captureMethodValue, !(value is NSNull) else { return nil }
+                if let str = value as? String {
+                    return str
+                } else if let nsStr = value as? NSString {
+                    return nsStr as String
+                }
+                return nil
+            }()
             let intentConfig = buildIntentConfiguration(
                 modeParams: modeParams,
                 paymentMethodTypes: intentConfiguration["paymentMethodTypes"] as? [String],
@@ -262,16 +271,35 @@ extension StripeSdk {
         }
     }
     
+    // private func mapCaptureMethod(_ captureMethod: String?) -> PaymentSheet.IntentConfiguration.CaptureMethod {
+    //     if let captureMethod = captureMethod {
+    //         switch captureMethod {
+    //         case "Automatic": return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+    //         case "Manual": return PaymentSheet.IntentConfiguration.CaptureMethod.manual
+    //         case "AutomaticAsync": return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+    //         default: return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+    //         }
+    //     }
+    //     return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+    // }
     private func mapCaptureMethod(_ captureMethod: String?) -> PaymentSheet.IntentConfiguration.CaptureMethod {
-        if let captureMethod = captureMethod {
-            switch captureMethod {
-            case "Automatic": return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
-            case "Manual": return PaymentSheet.IntentConfiguration.CaptureMethod.manual
-            case "AutomaticAsync": return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
-            default: return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
-            }
+        guard let captureMethod = captureMethod else {
+            return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
         }
-        return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+        // Trim whitespace and compare
+        let trimmed = captureMethod.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch trimmed {
+        case "Automatic": 
+            return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+        case "Manual": 
+            return PaymentSheet.IntentConfiguration.CaptureMethod.manual
+        case "AutomaticAsync": 
+            return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+        default: 
+            // Debug: log what we actually received
+            print("WARNING: Unknown captureMethod '\(trimmed)' (original: '\(captureMethod)'), defaulting to automatic")
+            return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+        }
     }
     
     private func buildIntentConfiguration(
