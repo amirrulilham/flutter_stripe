@@ -274,7 +274,7 @@ extension StripeSdk {
             default: return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
             }
         }
-        return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+        return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
     }
     
     private func buildIntentConfiguration(
