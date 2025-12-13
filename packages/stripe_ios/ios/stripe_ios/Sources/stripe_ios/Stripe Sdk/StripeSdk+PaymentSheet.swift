@@ -201,7 +201,10 @@ extension StripeSdk {
                 resolve(Errors.createError(ErrorType.Failed, "You must provide `intentConfiguration.confirmHandler` if you are not passing an intent client secret"))
                 return
             }
-            let captureMethodString = modeParams["captureMethod"] != nil ? (modeParams["captureMethod"] as? String) : nil
+            let captureMethodString: String? = {
+                guard let value = modeParams["captureMethod"], !(value is NSNull) else { return nil }
+                return (value as? String) ?? (value as? NSString) as String?
+            }()
             let intentConfig = buildIntentConfiguration(
                 modeParams: modeParams,
                 paymentMethodTypes: intentConfiguration["paymentMethodTypes"] as? [String],
