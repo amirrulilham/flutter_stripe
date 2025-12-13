@@ -292,10 +292,10 @@ extension StripeSdk {
             case "Automatic": return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
             case "Manual": return PaymentSheet.IntentConfiguration.CaptureMethod.manual
             case "AutomaticAsync": return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
-            default: return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+            default: return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
             }
         }
-        return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+        return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
     }
 
     func buildIntentConfiguration(
