@@ -209,21 +209,16 @@ extension StripeSdk {
     }
     
     private func mapCaptureMethod(_ captureMethod: String?) -> PaymentSheet.IntentConfiguration.CaptureMethod {
-        guard let captureMethod = captureMethod?.lowercased() else {
-            return .automatic
+        if let captureMethod = captureMethod {
+            switch captureMethod {
+            case "Automatic": return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+            case "Manual": return PaymentSheet.IntentConfiguration.CaptureMethod.manual
+            case "AutomaticAsync": return PaymentSheet.IntentConfiguration.CaptureMethod.automaticAsync
+            default: return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+            }
         }
-
-        switch captureMethod {
-        case "automatic":
-            return .automatic
-        case "manual":
-            return .manual
-        case "automaticasync":
-            return .automaticAsync
-        default:
-            return .automatic
-        }
-}
+        return PaymentSheet.IntentConfiguration.CaptureMethod.automatic
+    }
     
     private func buildIntentConfiguration(
         modeParams: NSDictionary,
